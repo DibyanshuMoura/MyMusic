@@ -24,7 +24,7 @@ body {
 .background {
   position: fixed;
   inset: 0;
-  background: url("/assets/boy.jpg") center / cover no-repeat;
+  background: url("/assets/moon.png") center / cover no-repeat;
 }
 
 #youtube-player {
@@ -126,6 +126,9 @@ body {
 }
 
 button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 38px;
   height: 38px;
   padding: 0;
@@ -161,7 +164,7 @@ button:hover {
 @media (max-width: 600px) {
   .player {
     bottom: 60px;
-    width: 90%;
+    width: 95%;
     padding: 18px 15px;
   }
 
@@ -178,7 +181,8 @@ button:hover {
     font-size: 12px;
   }
 
-  .controls {
+  .controls5{
+  text-align: center;
     gap: 20px;
   }
 
@@ -199,7 +203,7 @@ button:hover {
 @media (max-width: 400px) {
   .player {
     bottom: 50px;
-    width: 94%;
+    width: 95%;
   }
 
   #title {
