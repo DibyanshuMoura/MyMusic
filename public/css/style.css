@@ -2,23 +2,39 @@
   box-sizing: border-box;
 }
 
+:root {
+  --panel-background: rgba(7, 10, 16, 0.42);
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
   margin: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {
-  overflow: hidden;
+  min-height: 100dvh;
+  overflow-x: hidden;
   background: #111;
   color: white;
   font-family: "Iosevka Fixed", monospace;
 }
 
 .app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100%;
+  min-height: 100dvh;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
 }
 
 .background {
@@ -37,23 +53,150 @@ body {
 }
 
 .player {
-  position: absolute;
-  left: 50%;
-  bottom: 50px;
-  width: 680px;
-  max-width: 90%;
-  transform: translateX(-50%);
-  padding: 20px;
-  border: 1px solid white;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(10px);
+  position: relative;
+  width: min(680px, calc(100% - 2rem));
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 0;
+  background: var(--panel-background);
+  box-shadow: 0 1rem 3.5rem rgba(0, 0, 0, 0.24), inset 0 1px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  z-index: 1;
+}
+
+.playlist-panel {
+  position: relative;
+  height: clamp(20rem, 52dvh, 32rem);
+  margin-top: clamp(1rem, 3vw, 1.5rem);
+  width: min(680px, calc(100% - 2rem));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  background: var(--panel-background);
+  box-shadow: 0 1rem 3.5rem rgba(0, 0, 0, 0.24), inset 0 1px rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  z-index: 1;
+}
+
+.hero-spacer {
+  width: 100%;
+  height: clamp(20rem, 62dvh, 42rem);
+  flex: 0 0 auto;
+}
+
+.playlist-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.playlist-filters {
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.playlist-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.playlist-filter {
+  width: auto;
+  height: 1.9rem;
+  padding: 0 0.68rem;
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.playlist-filter.is-active {
+  border-color: white;
+  background: white;
+  color: #10131a;
+}
+
+#playlist-count {
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+.playlist-items {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.playlist-items::-webkit-scrollbar {
+  display: none;
+}
+
+.playlist-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  min-height: 3.9rem;
+  padding: 0.65rem 1rem;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.playlist-song {
+  display: grid;
+  min-width: 0;
+  gap: 0.22rem;
+}
+
+.playlist-title,
+.playlist-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist-title {
+  font-size: clamp(0.8rem, 2.5vw, 0.94rem);
+}
+
+.playlist-artist {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: clamp(0.68rem, 2.2vw, 0.77rem);
+}
+
+.playlist-item.is-current {
+  background: white;
+  color: #10131a;
+}
+
+.playlist-item.is-current .playlist-artist {
+  color: rgba(16, 19, 26, 0.65);
 }
 
 .track {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 #title {
@@ -61,41 +204,46 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 20px;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  text-align: center;
+  letter-spacing: 0.02em;
 }
 
 #artist {
   margin-top: 5px;
-  font-size: 15px;
+  font-size: clamp(0.8rem, 2.5vw, 0.94rem);
+  text-align: center;
   opacity: 0.6;
 }
 
 .timeline {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: clamp(0.4rem, 2vw, 0.65rem);
 }
 
 .timeline span {
-  width: 40px;
-  font-size: 13px;
+  width: 2.7rem;
+  font-size: clamp(0.7rem, 2.5vw, 0.8rem);
   text-align: center;
   opacity: 0.7;
 }
 
 #progress {
   flex: 1;
-  height: 5px;
+  height: 0.25rem;
   appearance: none;
-  background: #555;
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.27);
   cursor: pointer;
+  accent-color: white;
 }
 
 #progress::-webkit-slider-thumb {
   appearance: none;
   width: 12px;
   height: 12px;
-  border-radius: 50%;
+  border-radius: 0;
   background: white;
 }
 
@@ -103,16 +251,27 @@ body {
   width: 12px;
   height: 12px;
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
   background: white;
 }
 
 .controls {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 25px;
-  margin-top: 15px;
+  margin-top: 1.25rem;
+}
+
+.transport-controls {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.8rem, 5vw, 1.8rem);
+}
+
+.controls > .repeat {
+  position: absolute;
+  right: 0;
 }
 
 #clock {
@@ -121,7 +280,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   color: white;
-  font-size: 24px;
+  font-size: clamp(1rem, 4vw, 1.5rem);
   z-index: 10;
 }
 
@@ -132,62 +291,91 @@ button {
   width: 38px;
   height: 38px;
   padding: 0;
-  border: 0;
-  background: white;
+  border: 1px solid transparent;
+  flex: 0 0 auto;
+  border-radius: 0;
+  background: transparent;
   color: white;
   font-family: inherit;
-  font-size: 30px;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 120ms ease, background-color 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 
-#previous,
-#next {
+.control-button,
+.repeat {
   width: 38px;
   height: 38px;
+  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+button svg {
+  display: block;
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.control-button svg {
+  stroke: none;
+}
+
+.repeat svg {
+  fill: none;
+}
+
+.repeat.is-active {
+  border-color: white;
   background: white;
-  color: black;
-  font-size: 24px;
+  color: #10131a;
+  box-shadow: none;
 }
 
 #play {
   width: 52px;
   height: 52px;
   background: white;
-  color: black;
-  font-size: 32px;
+  color: #10131a;
+  box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.2);
 }
 
-button:hover {
-  opacity: 0.8;
+#play svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  stroke: none;
+}
+
+button:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+#play:active,
+.repeat.is-active:active {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+button:focus-visible,
+#progress:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 3px;
 }
 
 @media (max-width: 600px) {
   .player {
-    bottom: 60px;
-    width: 95%;
-    padding: 18px 15px;
-  }
-
-  #title {
-    font-size: 18px;
-  }
-
-  #artist {
-    font-size: 14px;
-  }
-
-  .timeline span {
-    width: 35px;
-    font-size: 12px;
-  }
-
-  .controls5{
-  text-align: center;
-    gap: 20px;
+    padding: 1rem;
   }
 
   #previous,
-  #next {
+  #next,
+  .repeat {
     width: 36px;
     height: 36px;
     font-size: 24px;
@@ -202,24 +390,29 @@ button:hover {
 
 @media (max-width: 400px) {
   .player {
-    bottom: 50px;
-    width: 95%;
+    width: calc(100% - 1.25rem);
   }
 
-  #title {
-    font-size: 16px;
+  .playlist-panel {
+    width: calc(100% - 1.25rem);
+    height: 50dvh;
   }
 
-  #artist {
-    font-size: 13px;
+  .hero-spacer {
+    height: clamp(17rem, 56dvh, 28rem);
   }
 
-  .controls {
-    gap: 15px;
+  .timeline span {
+    width: 2.25rem;
+  }
+
+  .transport-controls {
+    gap: 0.65rem;
   }
 
   #previous,
-  #next {
+  #next,
+  .repeat {
     width: 34px;
     height: 34px;
     font-size: 23px;

@@ -6,6 +6,10 @@ const elements = {
   play: document.getElementById("play"),
   previous: document.getElementById("previous"),
   next: document.getElementById("next"),
+  repeat: document.getElementById("repeat"),
+  playlist: document.getElementById("playlist"),
+  playlistCount: document.getElementById("playlist-count"),
+  playlistFilters: document.querySelector(".playlist-filters"),
   progress: document.getElementById("progress"),
   currentTime: document.getElementById("current-time"),
   duration: document.getElementById("duration")
@@ -15,6 +19,16 @@ let player = null;
 let currentIndex = 0;
 let progressTimer = null;
 let isLoading = true;
+let isRepeatEnabled = false;
+let activeCategory = "all";
+
+const playIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" /></svg>';
+const pauseIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 6h3v12H7V6Zm7 0h3v12h-3V6Z" /></svg>';
+
+function setPlayButton(isPlaying) {
+  elements.play.innerHTML = isPlaying ? pauseIcon : playIcon;
+  elements.play.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+}
 
 function setLoading(loading) {
   isLoading = loading;
@@ -72,12 +86,59 @@ function handleReady() {
   setLoading(false);
 }
 
+function renderPlaylist() {
+  const songs = document.createDocumentFragment();
+
+  playlist
+    .map((song, index) => ({ song, index }))
+    .filter(({ song }) =>
+      activeCategory === "all" || song.categories.includes(activeCategory)
+    )
+    .forEach(({ song, index }) => {
+    const item = document.createElement("button");
+    const details = document.createElement("span");
+    const title = document.createElement("span");
+    const artist = document.createElement("span");
+
+    item.type = "button";
+    item.className = "playlist-item";
+    item.dataset.index = index;
+    item.setAttribute("aria-label", `Play ${song.title} by ${song.artist}`);
+
+    details.className = "playlist-song";
+    title.className = "playlist-title";
+    title.textContent = song.title;
+    artist.className = "playlist-artist";
+    artist.textContent = song.artist;
+
+    details.append(title, artist);
+    item.append(details);
+    songs.append(item);
+    });
+
+  elements.playlist.replaceChildren(songs);
+  const visibleCount = activeCategory === "all"
+    ? playlist.length
+    : playlist.filter(song => song.categories.includes(activeCategory)).length;
+
+  elements.playlistCount.textContent = `${visibleCount} tracks`;
+  updatePlaylistSelection();
+}
+
+function updatePlaylistSelection() {
+  elements.playlist.querySelectorAll(".playlist-item").forEach(item => {
+    const isCurrent = Number(item.dataset.index) === currentIndex;
+
+    item.classList.toggle("is-current", isCurrent);
+    item.setAttribute("aria-current", isCurrent ? "true" : "false");
+  });
+}
+
 function handleStateChange(event) {
   if (event.data === YT.PlayerState.PLAYING) {
     setLoading(false);
 
-    elements.play.textContent = "Ⅱ";
-    elements.play.setAttribute("aria-label", "Pause");
+    setPlayButton(true);
 
     startProgress();
     updateDuration();
@@ -86,8 +147,7 @@ function handleStateChange(event) {
   if (event.data === YT.PlayerState.PAUSED) {
     setLoading(false);
 
-    elements.play.textContent = "▶";
-    elements.play.setAttribute("aria-label", "Play");
+    setPlayButton(false);
 
     stopProgress();
   }
@@ -99,15 +159,19 @@ function handleStateChange(event) {
   if (event.data === YT.PlayerState.CUED) {
     setLoading(false);
 
-    elements.play.textContent = "▶";
-    elements.play.setAttribute("aria-label", "Play");
+    setPlayButton(false);
 
     updateDuration();
   }
 
   if (event.data === YT.PlayerState.ENDED) {
     stopProgress();
-    nextSong();
+    if (isRepeatEnabled) {
+      player.seekTo(0, true);
+      player.playVideo();
+    } else {
+      nextSong();
+    }
   }
 }
 
@@ -167,6 +231,20 @@ function previousSong() {
   loadSong(true);
 }
 
+function toggleRepeat() {
+  isRepeatEnabled = !isRepeatEnabled;
+
+  elements.repeat.classList.toggle("is-active", isRepeatEnabled);
+  elements.repeat.setAttribute("aria-pressed", String(isRepeatEnabled));
+  elements.repeat.setAttribute(
+    "aria-label",
+    isRepeatEnabled ? "Repeat current track on" : "Repeat current track off"
+  );
+  elements.repeat.title = isRepeatEnabled
+    ? "Repeat current track on"
+    : "Repeat current track off";
+}
+
 function loadSong(autoplay) {
   updateTrack();
 
@@ -185,11 +263,30 @@ function loadSong(autoplay) {
   }
 }
 
+function selectSong(index) {
+  if (index < 0 || index >= playlist.length) {
+    return;
+  }
+
+  currentIndex = index;
+  updateTrack();
+  updatePlaylistSelection();
+
+  if (!player) {
+    return;
+  }
+
+  setLoading(true);
+  stopProgress();
+  loadSong(true);
+}
+
 function updateTrack() {
   const song = playlist[currentIndex];
 
   elements.title.textContent = song.title;
   elements.artist.textContent = song.artist;
+  updatePlaylistSelection();
 }
 
 function updateDuration() {
@@ -299,6 +396,36 @@ elements.next.addEventListener(
   nextSong
 );
 
+elements.repeat.addEventListener(
+  "click",
+  toggleRepeat
+);
+
+elements.playlistFilters.addEventListener("click", event => {
+  const filter = event.target.closest(".playlist-filter");
+
+  if (!filter) {
+    return;
+  }
+
+  activeCategory = filter.dataset.category;
+  elements.playlistFilters.querySelectorAll(".playlist-filter").forEach(item => {
+    const isActive = item === filter;
+
+    item.classList.toggle("is-active", isActive);
+    item.setAttribute("aria-selected", String(isActive));
+  });
+  renderPlaylist();
+});
+
+elements.playlist.addEventListener("click", event => {
+  const item = event.target.closest(".playlist-item");
+
+  if (item) {
+    selectSong(Number(item.dataset.index));
+  }
+});
+
 elements.progress.addEventListener(
   "input",
   seek
@@ -319,5 +446,8 @@ document.addEventListener(
     if (event.code === "ArrowRight") {
       nextSong();
     }
+
   }
 );
+
+renderPlaylist();

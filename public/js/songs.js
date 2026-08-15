@@ -167,7 +167,7 @@ export const playlist = [
     {
         title: "Heeriye",
         artist: "Jasleen Royal & Arijit Singh",
-        videoId: "6yB7yqZ0n1Y"
+        videoId: "RLzC55ai0eo"
     },
     {
         title: "Qismat",
@@ -265,11 +265,6 @@ export const playlist = [
         videoId: "cgwBRaFQWSQ"
     },
     {
-        title: "Wavy",
-        artist: "Karan Aujla",
-        videoId: "XTp5jaRU3Ws"
-    },
-    {
         title: "Diamond Koka",
         artist: "Gurnam Bhullar & Gur Sidhu",
         videoId: "Icf-0ncThvE"
@@ -355,11 +350,6 @@ export const playlist = [
         videoId: "g-Ij0idc_dk"
     },
     {
-        title: "Channa Mereya",
-        artist: "Arijit Singh",
-        videoId: "z-diRlyLGzo"
-    },
-    {
         title: "The Last Ride",
         artist: "Sidhu Moose Wala",
         videoId: "6xoB4ZiKKn0"
@@ -378,5 +368,97 @@ export const playlist = [
         title: "High End",
         artist: "Diljit Dosanjh",
         videoId: "UCoogBnurWk"
+    },
+    {
+        title: "Espresso",
+        artist: "Sabrina Carpenter",
+        videoId: "eVli-tstM5E"
+    },
+    {
+        title: "Blinding Lights",
+        artist: "The Weeknd",
+        videoId: "4NRXx6U8ABQ"
+    },
+    {
+        title: "BIRDS OF A FEATHER",
+        artist: "Billie Eilish",
+        videoId: "V9PVRfjEBTI"
+    },
+    {
+        title: "As It Was",
+        artist: "Harry Styles",
+        videoId: "H5v3kku4y6Q"
+    },
+    {
+        title: "Beautiful Things",
+        artist: "Benson Boone",
+        videoId: "Oa_RSwwpPaA"
+    },
+    {
+        title: "Murder In My Mind",
+        artist: "Kordhell",
+        videoId: "Rj4RfirEoQQ"
     }
 ];
+
+const southArtists = /Anirudh|Vijay|Sid Sriram|Anurag Kulkarni|Mangli|Sahithi|Sri Krishna|Jonita Gandhi/;
+const southTitles = /Kaavaalaa|Kurchi Madathapetti|Arabic Kuthu|Srivalli|Inkem Inkem|Samajavaragamana|Chuttamalle|Thalapathy Kacheri|Ramuloo Ramulaa|Butta Bomma/;
+const punjabiArtists = /Karan Aujla|Diljit Dosanjh|Shubh|AP Dhillon|Gurnam Bhullar|Sidhu Moose Wala|Harrdy Sandhu|Talwiinder|Guru Randhawa|Ammy Virk|Jass Manak|B Praak/;
+const editSongs = new Set([
+    "Esse Nao e Meu Fim",
+    "Husn",
+    "Aaj Ki Raat",
+    "Lover",
+    "Wavy",
+    "Channa Mereya",
+    "Sahiba",
+    "Softly",
+    "Jo Tum Mere Ho",
+    "Excuses",
+    "Tauba Tauba",
+    "Chaleya",
+    "Satranga",
+    "Aankhon Se Batana",
+    "Arabic Kuthu",
+    "Bijlee Bijlee"
+]);
+const englishSongs = new Set([
+    "Espresso",
+    "Blinding Lights",
+    "BIRDS OF A FEATHER",
+    "As It Was",
+    "Beautiful Things"
+]);
+
+playlist.forEach(song => {
+    const categories = [];
+    const details = `${song.title} ${song.artist}`;
+
+    if (southArtists.test(details) || southTitles.test(song.title)) {
+        categories.push("south");
+    }
+
+    if (punjabiArtists.test(details)) {
+        categories.push("punjabi");
+    }
+
+    if (song.title === "Murder In My Mind") {
+        categories.push("phonk");
+    }
+
+    if (englishSongs.has(song.title)) {
+        categories.push("english");
+    }
+
+    if (editSongs.has(song.title)) {
+        categories.push("edit");
+    }
+
+    if (!categories.some(category =>
+        ["south", "punjabi", "phonk", "english"].includes(category)
+    )) {
+        categories.push("hindi");
+    }
+
+    song.categories = categories;
+});

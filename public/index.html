@@ -16,6 +16,8 @@
 
     <div id="youtube-player"></div>
 
+    <div class="hero-spacer" aria-hidden="true"></div>
+
     <section class="player">
 
       <div class="track">
@@ -38,14 +40,48 @@
       </div>
 
       <div class="controls">
-        <button id="previous" aria-label="Previous">⏮</button>
+        <div class="transport-controls">
+          <button id="previous" class="control-button" type="button" aria-label="Previous track">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h2v14H5V5Zm13 1-8 6 8 6V6Z" /></svg>
+          </button>
 
-        <button id="play" class="play" aria-label="Play">▶</button>
+          <button id="play" class="play" type="button" aria-label="Play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 9 6-9 6V6Z" /></svg>
+          </button>
 
-        <button id="next" aria-label="Next">⏭</button>
+          <button id="next" class="control-button" type="button" aria-label="Next track">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 5h2v14h-2V5ZM6 6l8 6-8 6V6Z" /></svg>
+          </button>
+        </div>
+
+        <button
+          id="repeat"
+          class="repeat"
+          type="button"
+          aria-label="Repeat off"
+          aria-pressed="false"
+          title="Repeat off"
+        ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8.5V5l3 3.5-3 3.5V9.5c-1.1-1.2-2.7-2-4.5-2a6.5 6.5 0 1 0 6.2 8.5" /></svg></button>
       </div>
 
     </section>
+
+    <aside class="playlist-panel" aria-labelledby="playlist-heading">
+      <div class="playlist-heading">
+        <span id="playlist-heading">Playlist</span>
+        <span id="playlist-count"></span>
+      </div>
+      <div class="playlist-filters" role="tablist" aria-label="Playlist categories">
+        <button class="playlist-filter is-active" type="button" role="tab" aria-selected="true" data-category="all">All</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="south">South</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="punjabi">Punjabi</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="phonk">Phonk</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="hindi">Hindi</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="english">English</button>
+        <button class="playlist-filter" type="button" role="tab" aria-selected="false" data-category="edit">Edit</button>
+      </div>
+      <div id="playlist" class="playlist-items" aria-label="Song list"></div>
+    </aside>
 
   </main>
 
