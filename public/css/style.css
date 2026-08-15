@@ -23,10 +23,10 @@ body::-webkit-scrollbar {
 body {
   min-height: 100dvh;
   overflow-x: hidden;
-  /* Match the darkest tone of moon.png so any transient gap below the fixed
-     background (mobile URL bar resize, overscroll) reads as part of the image
-     instead of a black box. */
-  background: #000;
+  /* Match the dominant tone of moon.png (#2E3440) so any transient area below
+     or around the fixed background (mobile URL bar resize, overscroll, slow
+     image repaint) reads as part of the image instead of a black box. */
+  background: #2e3440;
   color: white;
   font-family: "Iosevka Fixed", monospace;
 }
@@ -47,9 +47,10 @@ body {
   /* Keep the image slightly beyond the visual viewport while mobile browser
      chrome changes size during a scroll, avoiding a briefly exposed edge. */
   inset: -2px;
-  /* Solid color keeps the layer opaque even if the image tiles repaint
-     slowly mid-scroll, so no black gap is ever visible beneath it. */
-  background: #000 url("/assets/moon.png") center / cover no-repeat;
+  /* Base color matches moon.png's dominant tone (#2E3440). While the layer
+     re-rasterizes at the new viewport height, the still-empty bottom strip
+     shows this color, which is indistinguishable from the image itself. */
+  background: #2e3440 url("/assets/moon.png") center / cover no-repeat;
   pointer-events: none;
   z-index: 0;
 }

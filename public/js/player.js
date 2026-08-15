@@ -16,7 +16,7 @@ const elements = {
 };
 
 let player = null;
-let currentIndex = 0;
+let currentIndex = Math.floor(Math.random() * playlist.length);
 let progressTimer = null;
 let isLoading = true;
 let isRepeatEnabled = false;
