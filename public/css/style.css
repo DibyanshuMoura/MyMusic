@@ -29,6 +29,8 @@ body {
 }
 
 .app {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,8 +41,14 @@ body {
 
 .background {
   position: fixed;
-  inset: 0;
+  /* Keep the image beyond the visual viewport while mobile browser chrome
+     changes size during a scroll, avoiding a briefly exposed bottom edge. */
+  inset: -2px;
   background: url("/assets/moon.png") center / cover no-repeat;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+  z-index: 0;
 }
 
 #youtube-player {
@@ -138,6 +146,8 @@ body {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -182,12 +192,12 @@ body {
 }
 
 .playlist-item.is-current {
-  background: white;
-  color: #10131a;
+  background: rgba(255, 255, 255, 0.46);
+  color: white;
 }
 
 .playlist-item.is-current .playlist-artist {
-  color: rgba(16, 19, 26, 0.65);
+  color: rgba(255, 255, 255, 0.56);
 }
 
 .track {
@@ -369,6 +379,15 @@ button:focus-visible,
 }
 
 @media (max-width: 600px) {
+  /* Backdrop filters on scrolling, translucent layers can briefly drop their
+     backing surface on mobile GPUs. The translucent tint preserves readability
+     without making the page scroll compositor wait for a blur redraw. */
+  .player,
+  .playlist-panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .player {
     padding: 1rem;
   }
