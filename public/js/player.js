@@ -92,7 +92,7 @@ function renderPlaylist() {
   playlist
     .map((song, index) => ({ song, index }))
     .filter(({ song }) =>
-      activeCategory === "all" || song.categories.includes(activeCategory)
+      activeCategory === "all" || song.category === activeCategory
     )
     .forEach(({ song, index }) => {
     const item = document.createElement("button");
@@ -119,7 +119,7 @@ function renderPlaylist() {
   elements.playlist.replaceChildren(songs);
   const visibleCount = activeCategory === "all"
     ? playlist.length
-    : playlist.filter(song => song.categories.includes(activeCategory)).length;
+    : playlist.filter(song => song.category === activeCategory).length;
 
   elements.playlistCount.textContent = `${visibleCount} tracks`;
   updatePlaylistSelection();
