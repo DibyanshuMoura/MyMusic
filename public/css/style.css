@@ -23,7 +23,10 @@ body::-webkit-scrollbar {
 body {
   min-height: 100dvh;
   overflow-x: hidden;
-  background: #111;
+  /* Match the darkest tone of moon.png so any transient gap below the fixed
+     background (mobile URL bar resize, overscroll) reads as part of the image
+     instead of a black box. */
+  background: #000;
   color: white;
   font-family: "Iosevka Fixed", monospace;
 }
@@ -41,13 +44,13 @@ body {
 
 .background {
   position: fixed;
-  /* Keep the image beyond the visual viewport while mobile browser chrome
-     changes size during a scroll, avoiding a briefly exposed bottom edge. */
+  /* Keep the image slightly beyond the visual viewport while mobile browser
+     chrome changes size during a scroll, avoiding a briefly exposed edge. */
   inset: -2px;
-  background: url("/assets/moon.png") center / cover no-repeat;
+  /* Solid color keeps the layer opaque even if the image tiles repaint
+     slowly mid-scroll, so no black gap is ever visible beneath it. */
+  background: #000 url("/assets/moon.png") center / cover no-repeat;
   pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform;
   z-index: 0;
 }
 
@@ -75,7 +78,7 @@ body {
 
 .playlist-panel {
   position: relative;
-  height: clamp(20rem, 52dvh, 32rem);
+  height: clamp(20rem, 52vh, 32rem);
   margin-top: clamp(1rem, 3vw, 1.5rem);
   width: min(680px, calc(100% - 2rem));
   display: flex;
@@ -90,7 +93,7 @@ body {
 
 .hero-spacer {
   width: 100%;
-  height: clamp(20rem, 62dvh, 42rem);
+  height: clamp(20rem, 62vh, 42rem);
   flex: 0 0 auto;
 }
 
@@ -414,11 +417,11 @@ button:focus-visible,
 
   .playlist-panel {
     width: calc(100% - 1.25rem);
-    height: 50dvh;
+    height: 50vh;
   }
 
   .hero-spacer {
-    height: clamp(17rem, 56dvh, 28rem);
+    height: clamp(17rem, 56vh, 28rem);
   }
 
   .timeline span {
