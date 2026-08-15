@@ -33,7 +33,7 @@ body {
   right: 20px;
   width: 200px;
   height: 200px;
-  opacity: 0;
+  display: none;
 }
 
 .player {

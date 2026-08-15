@@ -145,11 +145,6 @@ export const playlist = [
         videoId: "2mDCVzruYzQ"
     },
     {
-        title: "295",
-        artist: "Sidhu Moose Wala",
-        videoId: "n_FCrCQ6-bA"
-    },
-    {
         title: "Sajni",
         artist: "Arijit Singh",
         videoId: "k3g_WjLCsXM"
