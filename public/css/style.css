@@ -44,15 +44,28 @@ body {
 
 .background {
   position: fixed;
-  /* Keep the image slightly beyond the visual viewport while mobile browser
-     chrome changes size during a scroll, avoiding a briefly exposed edge. */
-  inset: -2px;
+  /* Size the box to the largest possible viewport (large viewport height)
+     instead of the dynamic viewport. Dynamic units track mobile browser
+     chrome as it shows/hides during a scroll, which resizes this box and
+     makes background-size: cover re-scale the image — that's the "zoom".
+     Sizing to the stable largest viewport keeps it fixed no matter what
+     the background is. */
+  top: -2px;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: calc(100vh + 4px);
   /* Base color matches moon.png's dominant tone (#2E3440). While the layer
-     re-rasterizes at the new viewport height, the still-empty bottom strip
-     shows this color, which is indistinguishable from the image itself. */
+     re-rasterizes, any transient strip shows this color, which is
+     indistinguishable from the image itself. */
   background: #2e3440 url("/assets/moon.png") center / cover no-repeat;
   pointer-events: none;
   z-index: 0;
+}
+
+@supports (height: 100lvh) {
+  .background {
+    height: calc(100lvh + 4px);
+  }
 }
 
 #youtube-player {
